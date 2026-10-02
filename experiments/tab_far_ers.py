@@ -26,7 +26,7 @@ from fmf.datasets.ghalamsiah2026 import ers_days, load_ers
 from fmf.detectors.prewhitening import ar_prewhiten, fit_ar
 from fmf.detectors.sequential import (conformal_e_statistic, count_alarms,
                                       gaussian_cusum_statistic)
-from fmf.theory.delay import gaussian_cusum_threshold
+from fmf.theory.delay import e_detector_min_delay, gaussian_cusum_threshold
 
 NAME = "tab_far_ers"
 
@@ -84,43 +84,52 @@ def evaluate_target(cfg, target, seasons):
     w_cal_flat = np.concatenate(w_cal)
     w_cal_flat = w_cal_flat[np.isfinite(w_cal_flat)]
 
-    block = cfg["block_minutes"]
-    b_cal = np.concatenate([block_means(x, block) for x in cal_days])
-    b_scale = b_cal.std()
-    b_test = [block_means(x, block) / b_scale for x in test_days]
-    b_cal = b_cal / b_scale
-
     samples_per_day = np.mean([len(x) for x in test_days])
     shift = cfg["design_shift"] * ar.gain / ar.sigma_w
-    b_shift = cfg["design_shift"] / b_scale
+    blocks = {}
+    for size in cfg["block_minutes"]:
+        b_cal = np.concatenate([block_means(x, size) for x in cal_days])
+        scale = b_cal.std()
+        blocks[size] = (b_cal / scale, [block_means(x, size) / scale for x in test_days],
+                        cfg["design_shift"] / scale)
+
     rows = []
     for arl0_days in cfg["arl0_days"]:
         arl0 = arl0_days * samples_per_day  # samples
-        h_gauss = gaussian_cusum_threshold(2.0 * arl0, shift)
-        h_e = np.log(2.0 * arl0)
-        h_block = np.log(2.0 * arl0 / block)
         detectors = {
-            "Gaussian CUSUM": (w_test, lambda z: gaussian_cusum_statistic(z, shift), h_gauss),
-            "e-detector, DKW": (w_test, lambda z: conformal_e_statistic(
-                z, w_cal_flat, cfg["kappas"], cfg["dkw_delta"]), h_e),
-            "e-detector, no DKW": (w_test, lambda z: conformal_e_statistic(
-                z, w_cal_flat, cfg["kappas"], None), h_e),
-            "Gaussian CUSUM, hourly": (b_test, lambda z: gaussian_cusum_statistic(z, b_shift),
-                                       gaussian_cusum_threshold(2.0 * arl0 / block, b_shift)),
-            "e-detector, hourly": (b_test, lambda z: conformal_e_statistic(
-                z, b_cal, cfg["block_kappas"], cfg["dkw_delta"]), h_block),
-            "e-detector, hourly, no DKW": (b_test, lambda z: conformal_e_statistic(
-                z, b_cal, cfg["block_kappas"], None), h_block),
+            "Gaussian CUSUM, 1 min": (w_test, lambda z: gaussian_cusum_statistic(z, shift),
+                                      gaussian_cusum_threshold(2.0 * arl0, shift), 1),
+            "e-detector, 1 min": (w_test, lambda z: conformal_e_statistic(
+                z, w_cal_flat, cfg["kappas"], cfg["dkw_delta"]), np.log(2.0 * arl0), 1),
+            "e-detector, 1 min, no DKW": (w_test, lambda z: conformal_e_statistic(
+                z, w_cal_flat, cfg["kappas"], None), np.log(2.0 * arl0), 1),
         }
-        for name, (streams, stat, h) in detectors.items():
+        for size, (b_cal, b_test, b_shift) in blocks.items():
+            arl0_b = 2.0 * arl0 / size
+            detectors[f"Gaussian CUSUM, {size} min"] = (
+                b_test, lambda z, b=b_shift: gaussian_cusum_statistic(z, b),
+                gaussian_cusum_threshold(arl0_b, b_shift), size)
+            detectors[f"e-detector, {size} min"] = (
+                b_test, lambda z, c=b_cal: conformal_e_statistic(
+                    z, c, cfg["block_kappas"], cfg["dkw_delta"]), np.log(arl0_b), size)
+            detectors[f"e-detector, {size} min, no DKW"] = (
+                b_test, lambda z, c=b_cal: conformal_e_statistic(
+                    z, c, cfg["block_kappas"], None), np.log(arl0_b), size)
+        for name, (streams, stat, h, size) in detectors.items():
             alarms = 0
             for x in streams:
                 for sign in (1.0, -1.0):
                     alarms += len(count_alarms(stat, sign * x, h))
-            rows.append({"target": target, "detector": name, "arl0_days": arl0_days,
-                         "alarms": alarms, "test_days": len(streams),
+            kappas = cfg["kappas"] if size == 1 else cfg["block_kappas"]
+            n_cal = w_cal_flat.size if size == 1 else blocks[size][0].size
+            d_min = (e_detector_min_delay(n_cal, size / (2.0 * arl0), kappas,
+                                          cfg["dkw_delta"] if "no DKW" not in name else None)
+                     if name.startswith("e-detector") else float("nan"))
+            rows.append({"target": target, "detector": name, "block_minutes": size,
+                         "arl0_days": arl0_days, "alarms": alarms, "test_days": len(streams),
                          "alarms_per_day": alarms / len(streams),
-                         "nominal_per_day": 1.0 / arl0_days})
+                         "nominal_per_day": 1.0 / arl0_days,
+                         "min_delay_hours": d_min * size / 60.0})
     day_means = np.array([x.mean() for x in cal_days])
     info = {"target": target, "seasons": seasons, "cal_days": len(cal_days),
             "test_days": len(test_days), "residual_std": float(cal_res.std()),
@@ -148,23 +157,33 @@ def main(tables_only=False):
     print(pd.DataFrame(payload["targets"]).round(4).to_string())
     print(table.pivot_table(index=["target", "detector"], columns="arl0_days",
                             values="alarms_per_day").round(3).to_string())
+    print(table.query("arl0_days == 30").pivot_table(index="detector", columns="target",
+                                                     values="min_delay_hours").round(1))
 
     def rate(target, detector, arl0):
         sel = table.query("target == @target and detector == @detector and arl0_days == @arl0")
         return float(sel.alarms_per_day.iloc[0])
 
     infos = {i["target"]: i for i in payload["targets"]}
+    words = {15: "fifteen", 30: "thirty", 60: "sixty", 120: "onetwenty"}
     numbers = {}
     for target, key in (("ccv_cmd", "cooling"), ("hcv_cmd", "heating"), ("fan_cmd", "fan")):
-        numbers[f"{key} test days"] = f"{infos[target]['test_days']}"
-        numbers[f"{key} kurtosis"] = f"{infos[target]['innovation_excess_kurtosis']:.0f}"
-        numbers[f"{key} gauss rate"] = f"{rate(target, 'Gaussian CUSUM', 30):.2f}"
-        numbers[f"{key} dkw rate"] = f"{rate(target, 'e-detector, DKW', 30):.2f}"
-        numbers[f"{key} hourly rate"] = f"{rate(target, 'e-detector, hourly', 30):.2f}"
-        numbers[f"{key} hourly gauss rate"] = f"{rate(target, 'Gaussian CUSUM, hourly', 30):.2f}"
-        numbers[f"{key} hourly nodkw rate"] = (
-            f"{rate(target, 'e-detector, hourly, no DKW', 30):.2f}")
-        numbers[f"{key} day offset"] = f"{infos[target]['day_offset_std']:.3f}"
+        info = infos[target]
+        numbers[f"{key} test days"] = f"{info['test_days']}"
+        numbers[f"{key} kurtosis"] = f"{info['innovation_excess_kurtosis']:.0f}"
+        numbers[f"{key} day offset"] = f"{info['day_offset_std']:.3f}"
+        numbers[f"{key} gauss minute rate"] = f"{rate(target, 'Gaussian CUSUM, 1 min', 30):.2f}"
+        numbers[f"{key} e minute rate"] = f"{rate(target, 'e-detector, 1 min', 30):.2f}"
+        for size in cfg["block_minutes"]:
+            w = words[size]
+            numbers[f"{key} e {w} rate"] = f"{rate(target, f'e-detector, {size} min', 30):.2f}"
+            numbers[f"{key} e {w} nodkw rate"] = (
+                f"{rate(target, f'e-detector, {size} min, no DKW', 30):.2f}")
+            numbers[f"{key} gauss {w} rate"] = (
+                f"{rate(target, f'Gaussian CUSUM, {size} min', 30):.2f}")
+            sel = table[(table.target == target) & (table.arl0_days == 30)
+                        & (table.detector == f"e-detector, {size} min")]
+            numbers[f"{key} e {w} min delay"] = f"{float(sel.min_delay_hours.iloc[0]):.1f}"
     write_numbers(NAME, numbers)
 
 
