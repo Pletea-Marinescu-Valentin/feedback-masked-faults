@@ -67,6 +67,7 @@ def main(tables_only=False):
                                                               cfg["lightgbm"], cfg["seed"])
             block = cfg["block_minutes"]
             per_day = {d: oof[(base.day == d).to_numpy()] for d in base.day.unique()}
+            day_sd = float(np.std([x.mean() for x in per_day.values()]))
             b_cal = np.concatenate([hourly(x, block) for x in per_day.values()])
             scale = b_cal.std()
             b_cal = b_cal / scale
@@ -83,7 +84,8 @@ def main(tables_only=False):
                 rows.append({
                     "monitor": spec["name"], "kind": spec["kind"], "season": r.season,
                     "date": str(r.date.date()), "fault": r.fault,
-                    "mean_residual": float(res.mean()), "hours": int(len(z)),
+                    "mean_residual": float(res.mean()), "day_sd": day_sd,
+                    "z_day": float(res.mean() / day_sd), "hours": int(len(z)),
                     "alarm_hour": None if np.isinf(hour) else int(hour) + 1,
                     "alarm_sign": sign,
                     "control_alarm_hour": None if np.isinf(ctrl_hour) else int(ctrl_hour) + 1,
@@ -113,6 +115,12 @@ def main(tables_only=False):
         numbers[f"{key} effort hits"] = f"{hits}"
         numbers[f"{key} cv hits"] = f"{cv_hits}"
         numbers[f"{key} median hour"] = "--" if np.isnan(med) else f"{med:.0f}"
+    leak = table[table.fault.isin(cfg["masked"]["leak"])]
+    effort_z = leak[leak.monitor == "cooling valve"].z_day
+    cv_z = leak[leak.monitor == "supply air temperature cooling"].z_day.abs()
+    numbers["leak effort z min"] = f"{effort_z.min():.1f}"
+    numbers["leak effort z max"] = f"{effort_z.max():.1f}"
+    numbers["leak cv z max"] = f"{cv_z.max():.1f}"
     ctrl = table.drop_duplicates(["monitor", "date"])
     numbers["control alarms"] = f"{int(ctrl.control_alarm_hour.notna().sum())}"
     numbers["control runs"] = f"{len(ctrl)}"
