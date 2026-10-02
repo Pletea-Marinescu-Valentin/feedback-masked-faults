@@ -1,0 +1,19 @@
+# Table: false alarms of sequential detectors on real fault-free ERS days.
+# Each season's days are split chronologically: the first half calibrates the
+# baseline model, the AR model and the conformal scores; the second half is
+# the test set. The detector state restarts at every alarm and every day.
+seed: 0
+ar_order: 8
+targets:
+  ccv_cmd: [Summer, Transition]   # cooling coil valve, cooling seasons
+  hcv_cmd: [Winter]               # heating coil valve
+  fan_cmd: [Summer, Transition, Winter]
+features: [mat, oat, rat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, hour]
+lightgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 15, min_child_samples: 50,
+           subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+arl0_days: [1, 7, 30]             # nominal ARL0 in days of operation (occupied minutes)
+design_shift: 0.05                # command shift the Gaussian CUSUM is tuned to
+dkw_delta: 0.05
+kappas: [0.8, 0.9, 0.95, 0.98, 0.99]
+block_minutes: 60
+block_kappas: [0.5, 0.8, 0.9, 0.95]
