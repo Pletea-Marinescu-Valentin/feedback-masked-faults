@@ -1,0 +1,17 @@
+# Fig. 3: delay vs nominal ARL0 on real ERS residual noise (cooling valve) with
+# an injected step in the command residual. Calibration: first half of each
+# season's fault-free days; test streams: test-day hourly blocks drawn with
+# replacement, the detector starting at the onset.
+seed: 5
+target: ccv_cmd
+seasons: [Summer, Transition]
+features: [mat, oat, rat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, hour]
+lightgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 15, min_child_samples: 50,
+           subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+block_minutes: 60
+shifts: [0.03, 0.06, 0.12]     # command shift (valve fraction)
+arl0_days: [7, 30, 90, 365, 3000]
+horizon_blocks: 2400
+replicas: 300
+dkw_delta: 0.05
+block_kappas: [0.35, 0.6, 0.85]
