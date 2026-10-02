@@ -77,3 +77,71 @@ def load_g36_degrad(scenario: str, points: list[str] | None = None) -> pd.DataFr
 
 def day_of_year(index: pd.Index) -> np.ndarray:
     return np.asarray(index, dtype=float) / 86400.0
+
+
+# RBC-ASHRAE1312, real part: ERS (Iowa), 1-min samples, one folder per test day
+# holding baseline.csv (the fault-free twin AHU on that day), the fault file and
+# weather.csv. Fault files carry OA-TEMP = 0, so the outdoor temperature is taken
+# from weather.csv.
+ERS_REAL = ROOT / "01_RBC-ASHRAE1312" / "Real"
+ERS_COLUMNS = {
+    "occupied": "SYS-CTL",
+    "fan_on": "SF-SST",
+    "sat": "SA-TEMP",
+    "sat_sp": "SAT_SPT",
+    "mat": "MA-TEMP",
+    "rat": "RA-TEMP",
+    "oat": "OA-TEMP",
+    "ccdat": "CHWC-DAT",
+    "hcdat": "HWC-DAT",
+    "chw_ewt": "CHWC-EWT",
+    "hw_ewt": "HWC-EWT",
+    "sa_cfm": "SA-CFM",
+    "oa_cfm": "OA-CFM",
+    "dsp": "SA-SP",
+    "dsp_sp": "SA_SPSPT",
+    "ra_humd": "RA-HUMD",
+    "sa_humd": "SA-HUMD",
+    "ccv_cmd": "CHWC-VLV",  # % open
+    "hcv_cmd": "HWC-VLV",  # % closed
+    "fan_cmd": "SF-SPD",  # % speed
+    "oad_cmd": "OA-DMPR",  # % open
+}
+ERS_FAHRENHEIT = {"sat", "sat_sp", "mat", "rat", "oat", "ccdat", "hcdat", "chw_ewt", "hw_ewt"}
+ERS_SEASONS = ("Summer", "Transition", "Winter")
+
+
+def ers_days() -> pd.DataFrame:
+    """One row per ERS test day: season, date, folder and fault file name."""
+    rows = []
+    for season in ERS_SEASONS:
+        for folder in sorted((ERS_REAL / season).iterdir()):
+            names = sorted(f.name for f in folder.iterdir())
+            fault = [n for n in names if n not in ("baseline.csv", "weather.csv")]
+            rows.append({"season": season, "date": pd.Timestamp(folder.name), "folder": folder,
+                         "fault": fault[0].removesuffix(".csv") if fault else None})
+    return pd.DataFrame(rows)
+
+
+def load_ers(folder: str | Path, which: str = "baseline") -> pd.DataFrame:
+    """Load one ERS day: which='baseline' (fault-free twin AHU) or 'fault'."""
+    folder = Path(folder)
+    if which == "baseline":
+        path = folder / "baseline.csv"
+    else:
+        path = next(f for f in folder.iterdir() if f.name not in ("baseline.csv", "weather.csv"))
+    raw = pd.read_csv(path)
+    date = pd.Timestamp(folder.name)
+    hhmm = raw["TIME"].astype(int)
+    index = date + pd.to_timedelta(hhmm // 100 * 60 + hhmm % 100, unit="min")
+    df = pd.DataFrame({k: raw[v].to_numpy(dtype=float) for k, v in ERS_COLUMNS.items()},
+                      index=pd.DatetimeIndex(index, name="time"))
+    weather = pd.read_csv(folder / "weather.csv")
+    df["oat"] = weather["OA-TEMP"].to_numpy(dtype=float)[: len(df)]
+    for col in ERS_FAHRENHEIT:
+        df[col] = (df[col] - 32.0) / 1.8
+    df["ccv_cmd"] = df["ccv_cmd"] / 100.0
+    df["hcv_cmd"] = 1.0 - df["hcv_cmd"] / 100.0
+    df["fan_cmd"] = df["fan_cmd"] / 100.0
+    df["oad_cmd"] = df["oad_cmd"] / 100.0
+    return df
