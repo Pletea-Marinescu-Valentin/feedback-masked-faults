@@ -87,6 +87,25 @@ def brownian_cusum_delay(information: float, arl0: float) -> float:
     return float((np.expm1(-h) + h) / information)
 
 
+def e_detector_min_delay(n: int, alpha: float, kappas: ArrayLike,
+                         dkw_delta: float | None = None) -> float:
+    """Fewest observations before a kappa-mixture e-CUSUM can alarm, for any fault size.
+
+    With n calibration scores the conformal p-value is at least 1 / (n + 1),
+    plus eps = sqrt(ln(1 / delta) / (2 n)) under the DKW correction, so each
+    e-value is at most kappa * p_min^(kappa - 1). The average over K kappas
+    alarms only once the best component reaches K / alpha.
+    """
+    kappas = np.atleast_1d(np.asarray(kappas, dtype=float))
+    p_min = 1.0 / (n + 1.0)
+    if dkw_delta is not None:
+        p_min += np.sqrt(np.log(1.0 / dkw_delta) / (2.0 * n))
+    best = np.max(np.log(kappas) + (kappas - 1.0) * np.log(p_min))
+    if best <= 0.0:
+        return float("inf")
+    return float(np.ceil(np.log(kappas.size / alpha) / best))
+
+
 def cumulative_information_delay(information: ArrayLike, arl0: float) -> np.ndarray:
     """First index t with sum_{s <= t} I_s >= ln(ARL0), along axis 0; -1 if never.
 
