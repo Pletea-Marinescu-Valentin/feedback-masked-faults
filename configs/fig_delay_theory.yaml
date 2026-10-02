@@ -1,0 +1,28 @@
+# Fig. 4: measured vs predicted detection delay on the synthetic loop.
+# The prediction uses only the CV-equivalent fault size m_eq and the long-run
+# variance of the CV-referred noise; tuning, valve law and fault type vary.
+seed: 7
+dt: 60.0
+t_in: 24.0                  # constant context: 11 K across the coil, u_n = 0.553 (linear valve)
+calibration_days: 30
+burn_in_samples: 720
+calibrations: 4              # independent calibration runs per condition
+replicas: 50                 # test replicas per calibration
+max_horizon_days: 14
+ar_order: 8
+arl0_days: [30, 1000]       # design ARL0 values; the information rate is the delay slope
+                            # between them, the delay is reported at the first
+sensor_std: 0.1
+disturbance_rho: 0.98
+disturbance_std: [0.3, 0.6]
+loops:
+  - {valve: linear, kp_scale: 0.5}
+  - {valve: linear, kp_scale: 1.0}
+  - {valve: linear, kp_scale: 2.0}
+  - {valve: equal_percentage, kp_scale: 0.5}
+  - {valve: equal_percentage, kp_scale: 1.0}
+faults:
+  - {type: bias, size: 0.25}
+  - {type: bias, size: 0.5}
+  - {type: fouling, size: 0.025}
+  - {type: fouling, size: 0.05}
