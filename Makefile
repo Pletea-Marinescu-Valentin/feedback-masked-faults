@@ -7,7 +7,10 @@ PYTHON ?= python
 FIGURE_SCRIPTS := $(sort $(wildcard experiments/fig_*.py))
 TABLE_SCRIPTS := $(sort $(wildcard experiments/tab_*.py))
 
-.PHONY: test figures tables paper clean
+.PHONY: data test figures tables paper clean
+
+data:
+	@for s in lbnl2019 wang2025 ghalamsiah2026 lbnl2022; do $(PYTHON) scripts/download/$$s.py || exit 1; done
 
 test:
 	$(PYTHON) -m pytest
