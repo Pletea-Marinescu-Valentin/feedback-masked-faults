@@ -66,6 +66,27 @@ def gaussian_cusum_threshold(arl0: float, shift: float, sigma: float = 1.0) -> f
     return brentq(gap, 0.0, np.log(arl0) + 20.0)
 
 
+def brownian_cusum_delay(information: float, arl0: float) -> float:
+    """Delay of the matched CUSUM in the Brownian limit (small per-sample information).
+
+    With log-likelihood-ratio drift +-I and variance 2I per sample,
+    ARL0 = (e^h - h - 1) / I and D = (e^-h + h - 1) / I, hence
+    D = (ln(I * ARL0) - 1) / I + o(1): the asymptotic ln(ARL0) / I overstates
+    the delay by ln(1 / I) / I. With I = i * dt and ARL0 = A / dt the delay in
+    time units, D * dt = (ln(i * A) - 1) / i, does not depend on the sampling
+    period.
+    """
+    target = information * arl0
+
+    def gap(h: float) -> float:
+        return np.expm1(h) - h - target
+
+    if target <= 0.0:
+        raise ValueError("information * arl0 must be positive")
+    h = brentq(gap, 0.0, np.log(target + 1.0) + 2.0)
+    return float((np.expm1(-h) + h) / information)
+
+
 def cumulative_information_delay(information: ArrayLike, arl0: float) -> np.ndarray:
     """First index t with sum_{s <= t} I_s >= ln(ARL0), along axis 0; -1 if never.
 

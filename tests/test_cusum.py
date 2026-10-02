@@ -82,3 +82,20 @@ def test_cumulative_information_pauses_in_zero_information_windows():
     info[3:13] = 0.0
     assert cumulative_information_delay(info, arl0) == 19
     assert cumulative_information_delay(np.zeros(10), arl0) == -1
+
+
+@pytest.mark.parametrize("info", [1e-4, 1e-3, 1e-2])
+def test_brownian_delay_matches_siegmund_for_small_shifts(info):
+    from fmf.theory.delay import brownian_cusum_delay
+
+    arl0 = 43200.0
+    delta = np.sqrt(2.0 * info)
+    h = gaussian_cusum_threshold(arl0, delta)
+    siegmund = gaussian_cusum_arl(h, delta, actual_shift=delta)
+    assert brownian_cusum_delay(info, arl0) == pytest.approx(siegmund, rel=0.03)
+    # Far below the asymptotic ln(ARL0) / I; the leading terms (ln(I ARL0) - 1) / I
+    # hold once I * ARL0 is large.
+    assert brownian_cusum_delay(info, arl0) < 0.5 * np.log(arl0) / info
+    if info * arl0 > 40:
+        assert brownian_cusum_delay(info, arl0) == pytest.approx(
+            (np.log(info * arl0) - 1.0) / info, rel=0.05)
