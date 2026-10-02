@@ -122,3 +122,41 @@ def test_log_space_detectors_match_recursions():
         sr_ref.append(np.log(r))
     np.testing.assert_allclose(log_e_cusum(np.log(e)), np.array(cusum_ref), atol=1e-12)
     np.testing.assert_allclose(log_e_shiryaev_roberts(np.log(e)), np.array(sr_ref), atol=1e-12)
+
+
+def test_unfloored_e_cusum_matches_recursion():
+    from fmf.detectors.e_detector import log_e_cusum_unfloored
+
+    rng = np.random.default_rng(6)
+    e = np.exp(rng.normal(-0.1, 0.8, size=40))
+    m, ref = 0.0, []
+    for x in e:
+        m = x * max(m, 1.0)
+        ref.append(np.log(m))
+    np.testing.assert_allclose(log_e_cusum_unfloored(np.log(e)), ref, atol=1e-12)
+
+
+def test_kappa_mixture_keeps_arl0_and_detects_small_shifts():
+    from scipy.stats import norm
+
+    from fmf.detectors.e_detector import log_e_cusum_unfloored, log_mixture
+
+    rng = np.random.default_rng(7)
+    kappas = np.array([0.5, 0.8, 0.9, 0.95, 0.98])
+
+    def run(p, threshold, horizon):
+        stats = np.stack([log_e_cusum_unfloored(np.log(power_calibrator(p, k))) for k in kappas],
+                         axis=-1)
+        return run_lengths(first_crossing(log_mixture(stats), threshold), horizon)
+
+    h0 = run(rng.uniform(size=(1500, 600)), np.log(1.0 / ALPHA), 1500)
+    assert h0.mean() >= 1.0 / ALPHA
+    # A 0.3-sigma shift at ARL0 >= 1e4: kappa = 0.5 has a negative drift and relies on
+    # fluctuations; the mixture follows the kappa with positive drift.
+    p_shift = norm.sf(0.3 + rng.standard_normal((3000, 400)))
+    threshold = np.log(1e4)
+    rl_half = run_lengths(first_crossing(log_e_cusum(np.log(power_calibrator(p_shift, 0.5))),
+                                         threshold), 3000)
+    rl_mix = run(p_shift, threshold, 3000)
+    assert np.all(rl_mix < 3000)
+    assert rl_mix.mean() < 0.6 * rl_half.mean()

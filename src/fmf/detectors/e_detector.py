@@ -46,6 +46,33 @@ def log_e_cusum(log_e: ArrayLike) -> np.ndarray:
     return cusum(log_e)
 
 
+def log_e_cusum_unfloored(log_e: ArrayLike) -> np.ndarray:
+    """log M_t of the e-CUSUM, without the floor at zero of log_e_cusum.
+
+    log M_t = log e_t + max(log M_{t-1}, 0). Averages over a kappa grid must use
+    M_t itself: M_t <= R_t, whereas max(M_t, 1) is not dominated by R_t.
+    Missing observations (NaN) count as e_t = 1.
+    """
+    log_e = np.asarray(log_e, dtype=float)
+    floored = cusum(log_e)
+    previous = np.concatenate([np.zeros_like(floored[:1]), floored[:-1]], axis=0)
+    return np.where(np.isnan(log_e), 0.0, log_e) + previous
+
+
+def log_mixture(log_stats: ArrayLike, axis: int = -1) -> np.ndarray:
+    """log of the average of e-detector statistics along `axis` (e.g. over a kappa grid).
+
+    The average of e-SR statistics is again an e-SR statistic, and each
+    e-CUSUM is dominated by its e-SR, so alarming when the average of e-CUSUM
+    (or e-SR) statistics reaches 1 / alpha keeps ARL0 >= 1 / alpha. Small
+    per-sample shifts need kappa close to 1, where E[log e] > 0 under the
+    alternative; a grid covers shifts of unknown size.
+    """
+    log_stats = np.asarray(log_stats, dtype=float)
+    k = log_stats.shape[axis]
+    return np.logaddexp.reduce(log_stats, axis=axis) - np.log(k)
+
+
 def log_e_shiryaev_roberts(log_e: ArrayLike) -> np.ndarray:
     """log R_t along axis 0.
 
