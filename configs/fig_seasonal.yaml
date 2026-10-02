@@ -1,0 +1,20 @@
+# Fig. 2: seasonal information windows on G36-Degrad (one year, 5-min samples).
+# Fault signatures are paired differences u_fault - u_baseline (identical weather
+# and schedules in both runs); noise per actuator is the hourly spread of the
+# out-of-fold residual on the real ERS fault-free days (ers_noise below).
+seed: 3
+block_samples: 12              # one hour of 5-min samples
+arl0_days: 260                 # one year of weekdays; occupied hours only
+hours_per_day: 12
+replicas: 200
+scenarios:
+  sat_bias_plus: {label: "SAT sensor bias, +1 K/yr", actuators: [hcv_cmd, oad_cmd, ccv_cmd]}
+  coil_fouling_14: {label: "coil air-side fouling, 14 %/yr", actuators: [ccv_cmd, fan_cmd]}
+ers_noise:
+  lightgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 15, min_child_samples: 50,
+             subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+  monitors:
+    ccv_cmd: {seasons: [Summer, Transition], features: [mat, oat, rat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, hour]}
+    hcv_cmd: {seasons: [Winter], features: [mat, oat, rat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, hour]}
+    fan_cmd: {seasons: [Summer, Transition, Winter], features: [sa_cfm, dsp_sp, oad_cmd, mat, oat, hour]}
+    oad_cmd: {seasons: [Summer, Transition, Winter], features: [oat, mat, rat, sat_sp, sa_cfm, hour]}
