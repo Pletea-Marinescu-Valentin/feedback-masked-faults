@@ -1,0 +1,14 @@
+# Fig. 1: masking of a CV sensor bias and of coil fouling in the synthetic loop.
+seed: 1
+days: 3.0
+start_day: 196.0      # mid-July: the coil modulates all day
+onset_day: 1.0        # faults start one day into the window
+dt: 60.0
+smoothing_min: 15     # display average of the residual
+bias: 1.0             # CV sensor bias [K]
+fouling: 0.15         # capacity loss fraction delta (unsaturated at the daily peak)
+noise:
+  sensor_std: 0.1
+  quantization: 0.05
+  disturbance_std: 0.2
+  disturbance_rho: 0.95
