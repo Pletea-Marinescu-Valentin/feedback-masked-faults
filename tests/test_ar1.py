@@ -60,3 +60,28 @@ def test_delay_scales_with_ar1_factor(rho, n_runs, horizon):
     slope_ar = delay_slope(w, mu * (1 - rho), np.sqrt(1 - rho**2), horizon)
     slope_iid = delay_slope(mu + rng.standard_normal((200, 4000)), mu, 1.0, 200)
     assert slope_ar / slope_iid == pytest.approx(1.0 / ar1_information_factor(rho), rel=0.08)
+
+
+def test_fit_ar_recovers_ar2_and_whitens():
+    from scipy.signal import lfilter
+
+    from fmf.detectors.prewhitening import ar_prewhiten, fit_ar
+
+    rng = np.random.default_rng(4)
+    phi = np.array([1.2, -0.35])
+    x = lfilter([0.5], [1.0, -phi[0], -phi[1]], rng.standard_normal((20000, 20)), axis=0)[500:]
+    model = fit_ar(x, 2)
+    np.testing.assert_allclose(model.phi, phi, atol=0.01)
+    assert model.sigma_w == pytest.approx(0.5, rel=0.01)
+    assert model.long_run_variance == pytest.approx(0.25 / (1 - phi.sum()) ** 2, rel=0.03)
+    w = ar_prewhiten(x, model)
+    assert np.all(np.isnan(w[:2]))
+    assert abs(lag1_autocorrelation(w[2:]).mean()) < 0.01
+
+
+def test_ar_prewhiten_skips_gaps():
+    from fmf.detectors.prewhitening import ARModel, ar_prewhiten
+
+    model = ARModel(phi=np.array([0.5]), sigma_w=1.0, mean=0.0)
+    x = np.array([1.0, 2.0, np.nan, 4.0, 5.0])
+    np.testing.assert_allclose(ar_prewhiten(x, model), [np.nan, 1.5, np.nan, np.nan, 3.0])

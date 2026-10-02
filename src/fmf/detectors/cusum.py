@@ -10,8 +10,10 @@ def cusum(increments: ArrayLike) -> np.ndarray:
     """W_t = max(0, W_{t-1} + l_t), W_0 = 0, along axis 0.
 
     Computed as S_t - min(0, min_{k <= t} S_k), with S the partial sums of l.
+    NaN increments (no observation) leave the statistic unchanged.
     """
-    s = np.cumsum(np.asarray(increments, dtype=float), axis=0)
+    increments = np.asarray(increments, dtype=float)
+    s = np.cumsum(np.where(np.isnan(increments), 0.0, increments), axis=0)
     return s - np.minimum(np.minimum.accumulate(s, axis=0), 0.0)
 
 
