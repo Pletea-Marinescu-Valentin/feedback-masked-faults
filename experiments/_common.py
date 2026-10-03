@@ -80,7 +80,7 @@ def figure(width: float = COLUMN_WIDTH, height: float = 2.0, **kwargs):
 def save_figure(fig, name: str) -> Path:
     FIGS.mkdir(parents=True, exist_ok=True)
     path = FIGS / f"{name}.pdf"
-    fig.savefig(path)
+    fig.savefig(path, metadata={"CreationDate": None, "ModDate": None})
     plt.close(fig)
     return path
 

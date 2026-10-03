@@ -29,6 +29,21 @@ ERS (RBC-ASHRAE1312 Real), 162 columns, temperatures in °F:
 - The faulted unit has no fault-free day in this release, so unit differences cannot be separated from fault effects on faulted days.
 - Masked faults: `HeaCoiValLea*` (summer: the cooling valve compensates), `HeaCoiFou_*`, `HeatCoiReduCapa_*` (winter; stages 2-3 saturate and show in the CV), `AirFilBlock_*`, `SupDucLea_*`.
 
+Nesbitt (RBC-Nesbitt), 540 columns, 5 min, three AHU column blocks with
+repeated names (pandas suffixes `.1`, `.2`); the block-to-AHU mapping is not
+stated in the headers.
+- u: `Feedback: Cooling Coil Valve Position` (feedback, no command logged),
+  `Control: Supply Fan Speed`, `Control: Steam Valve 1/3`, `2/3`, economizer position.
+- Baseline days: cooling active on 12 (2016-06 to 2016-10, 2017-06/07), steam
+  heating on most winter days; the measured supply-air temperature sits up to
+  3.4 degF above its setpoint on several winter days.
+- The supply-air "sensor bias" faults (`TSup_m4`, `TSup_p4`, `TSup_m3.5`) were
+  emulated by overriding the setpoint demand adjust. On 2016-09-07 the measured
+  supply-air temperature rises 3.4 degF above its logged setpoint while the
+  valve barely moves, i.e. the fault shows in the controlled variable; on
+  2016-08-08 the logged setpoint itself moves with the reset. Not usable as
+  masked-sensor-bias cases without the AHU mapping and the emulation details.
+
 G36-Degrad, 114 columns (151 header fields including zones), temperatures in K:
 - u: cooling valve, heating valve, supply-fan speed signal, outdoor/return/exhaust damper signals.
 - CV: supply-air temperature and setpoint, duct static pressure and setpoint.

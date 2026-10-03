@@ -43,13 +43,36 @@ pytest
 
 ## Data
 
-No data is committed. Each dataset is fetched into `data/raw/` by its script in
-`scripts/download/`, which verifies SHA-256 checksums.
+No data is committed. `make data` (or the scripts in `scripts/download/`)
+fetches the four public datasets into `data/raw/`, verifying sizes, provider
+MD5s and the SHA-256 digests pinned in `scripts/download/SHA256SUMS`
+(about 1.5 GB of archives, 10 GB on disk after extraction). `docs/data_inventory.md` lists
+the points, resolutions and fault-free periods of each set.
+
+## Experiments
+
+| Script | Paper item | Data | Run time |
+|---|---|---|---|
+| `experiments/fig_masking.py` | Fig. 1 | synthetic loop | seconds |
+| `experiments/fig_delay_theory.py` | Fig. 2 | synthetic loop, 40 conditions | about 2 min |
+| `experiments/fig_seasonal.py` | Fig. 3 | G36-Degrad + ERS noise | about 30 s |
+| `experiments/tab_far_ers.py` | Table 1 | ERS fault-free days | about 15 s |
+| `experiments/fig_delay_arl.py` | Fig. 4 | ERS residual noise | seconds |
+| `experiments/tab_detection_ers.py` | text (real faults) | ERS faulted days | about 1 min |
+| `experiments/tab_design.py` | text (fleet budget, minimum delay) | formulas only | instant |
+
+Each script reads `configs/<name>.yaml` (fixed seeds), writes intermediate
+results to `results/`, figures to `paper/figs/`, and every number quoted in the
+paper to `paper/generated/<name>.tex`. Scripts with a long simulation accept
+`--plot-only` (or `--tables-only`) to redraw from `results/`.
+Design decisions that change results are recorded in `docs/decisions/`.
 
 ## Reproducing the paper
 
 ```bash
-make figures   # experiments/fig_*.py -> paper/figs/
-make tables    # experiments/tab_*.py -> results/tables/
-make paper     # latexmk -pdf
+make data      # download and verify the datasets
+make test      # unit tests
+make figures   # experiments/fig_*.py -> paper/figs/, paper/generated/
+make tables    # experiments/tab_*.py -> results/tables/, paper/generated/
+make paper     # latexmk -pdf (needs the IFAC class, see paper/README.md)
 ```
