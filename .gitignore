@@ -34,21 +34,10 @@ venv/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# IFAC class files: their license forbids redistribution (see paper/README.md)
-paper/ifacconf.cls
-paper/ifacconf.bst
-
-# LaTeX build artifacts
-paper/*.aux
-paper/*.bbl
-paper/*.blg
-paper/*.fdb_latexmk
-paper/*.fls
-paper/*.log
-paper/*.out
-paper/*.spl
-paper/*.synctex.gz
-paper/*.pdf
+# Manuscript: the LaTeX sources, bibliography, generated macros and IFAC class
+# files stay private; only the figures written by experiments/ are tracked
+/paper/*
+!/paper/figs/
 
 # Editors and OS
 .vscode/

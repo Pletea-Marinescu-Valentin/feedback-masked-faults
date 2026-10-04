@@ -39,7 +39,10 @@ pytest
 | `experiments/` | reproducible runs writing to `results/` and `paper/figs/` |
 | `scripts/download/` | one download script per dataset, with SHA-256 checksums |
 | `docs/decisions/` | architecture decision records |
-| `paper/` | IFAC manuscript |
+| `results/tables/` | result tables of the ERS experiments |
+| `paper/figs/` | figures of the paper |
+
+The manuscript source is not part of this repository.
 
 ## Data
 
@@ -61,10 +64,12 @@ the points, resolutions and fault-free periods of each set.
 | `experiments/tab_detection_ers.py` | text (real faults) | ERS faulted days | about 1 min |
 | `experiments/tab_design.py` | text (fleet budget, minimum delay) | formulas only | instant |
 | `experiments/tab_guideline_ers.py` | text (Guideline 36 AFDD baseline) | ERS days | seconds |
+| `experiments/tab_pca_ers.py` | text (PCA T²/SPE baseline) | ERS days | seconds |
 
 Each script reads `configs/<name>.yaml` (fixed seeds), writes intermediate
 results to `results/`, figures to `paper/figs/`, and every number quoted in the
-paper to `paper/generated/<name>.tex`. Scripts with a long simulation accept
+paper to `paper/generated/<name>.tex`, a LaTeX macro file read by the
+manuscript and not tracked here. Scripts with a long simulation accept
 `--plot-only` (or `--tables-only`) to redraw from `results/`.
 Design decisions that change results are recorded in `docs/decisions/`.
 
@@ -75,5 +80,5 @@ make data      # download and verify the datasets
 make test      # unit tests
 make figures   # experiments/fig_*.py -> paper/figs/, paper/generated/
 make tables    # experiments/tab_*.py -> results/tables/, paper/generated/
-make paper     # latexmk -pdf (needs the IFAC class, see paper/README.md)
+make paper     # latexmk -pdf (needs the manuscript source and the IFAC class)
 ```
