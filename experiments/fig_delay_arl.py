@@ -1,4 +1,4 @@
-"""Fig. 3: price of the false-alarm guarantee on real residual noise.
+"""Fig. 4: price of the false-alarm guarantee on real residual noise.
 
 Hourly means of the out-of-fold cooling-valve residual on real fault-free ERS
 days form the noise; a step of known size is added from the onset. Test
@@ -6,7 +6,7 @@ streams resample whole test days (hourly blocks) with replacement. We compare
 the delay of the hourly e-detector with DKW correction, whose false-alarm rate
 held on these days, with a Gaussian CUSUM tuned to the shift, whose rate did
 not (Table 1), over a range of nominal ARL0, together with the minimum delay
-(3) of the e-detector.
+D_min of the e-detector.
 """
 
 import json
@@ -83,6 +83,8 @@ def main(plot_only=False):
     curves = payload["curves"]
     fig, ax = figure(height=1.95)
     arls = np.asarray(cfg["arl0_days"], dtype=float)
+    x_label = arls[-1] * 1.25
+    labels = []
     for shift, color in zip(cfg["shifts"], SHIFT_COLORS):
         for name, style, marker in (("e-detector", "-", "o"), ("Gaussian CUSUM", "--", "s")):
             ys = [c["mean_delay_hours"] for c in curves
@@ -91,14 +93,21 @@ def main(plot_only=False):
                     if name == "Gaussian CUSUM" else color)
         ys = [c["mean_delay_hours"] for c in curves
               if c["detector"] == "e-detector" and c["shift"] == shift]
-        ax.text(arls[-1] * 1.25, ys[-1], rf"$\Delta u={shift:.2f}$", color=color, va="center",
-                fontsize=7)
+        labels.append(ax.text(x_label, ys[-1], rf"$\Delta u={shift:.2f}$", color=color,
+                              va="center", fontsize=7))
     dmin = [payload["min_delay_hours"][str(a)] for a in cfg["arl0_days"]]
     ax.plot(arls, dmin, color=INK_MUTED, lw=0.8, ls=":")
-    ax.text(arls[-1] * 1.25, dmin[-1], r"$D_{\min}$", color=INK_MUTED, fontsize=7, va="center")
+    labels.append(ax.text(x_label, dmin[-1], r"$D_{\min}$", color=INK_MUTED, fontsize=7,
+                          va="center"))
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlim(arls[0] * 0.8, arls[-1] * 3.5)
+    # Extend the log x-axis just enough for the longest direct label (plus 3 pt) to end
+    # inside the axes; label widths are fixed in display units.
+    renderer = fig.canvas.get_renderer()
+    room = ((max(t.get_window_extent(renderer).width for t in labels) + 3.0 * fig.dpi / 72.0)
+            / ax.get_window_extent(renderer).width)
+    lo, at = np.log10(arls[0] * 0.8), np.log10(x_label)
+    ax.set_xlim(10.0**lo, 10.0 ** (lo + (at - lo) / (1.0 - room)))
     ax.set_xlabel(r"Nominal ARL$_0$ [operating days]")
     ax.set_ylabel("Mean delay [h]")
     from matplotlib.lines import Line2D

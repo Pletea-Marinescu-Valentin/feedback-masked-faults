@@ -1,4 +1,4 @@
-# Fig. 3: delay vs nominal ARL0 on real ERS residual noise (cooling valve) with
+# Fig. 4: delay vs nominal ARL0 on real ERS residual noise (cooling valve) with
 # an injected step in the command residual. Calibration: first half of each
 # season's fault-free days; test streams: test-day hourly blocks drawn with
 # replacement, the detector starting at the onset.
