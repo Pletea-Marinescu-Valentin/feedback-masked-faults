@@ -1,0 +1,12 @@
+# Baseline: ASHRAE Guideline 36-2021 AFDD (Addendum p) on the real ERS days.
+# Default internal variables except the duct-pressure threshold, converted to
+# the dataset unit (25 Pa = 0.1 in. w.c.). Two sensor sets: the dedicated
+# coil-discharge sensors of the ERS (HCET = MAT, HCLT = CCET = heating-coil
+# discharge, CCLT = cooling-coil discharge) and MAT/SAT only, as on most AHUs
+# (fan heat between the sensors). MinOA-P per season = most frequent outdoor-air damper
+# position below 99 % on the fault-free days.
+eps_dsp: 0.1
+masked:
+  leak: [HeaCoiValLeak_0.4, HeaCoiValLea_1, HeaCoiValLa_2]
+  capacity: [HeaCoiFou_1, HeaCoiFou_2, HeatCoiReduCapa_1, HeatCoiReduCapa_2, HeatCoiReduCapa_3]
+  airside: [AirFilBlock_10, AirFilBlock_25, SupDucLea_AfterSF, SupDucLea_BeforeSF]
