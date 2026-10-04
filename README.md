@@ -34,7 +34,7 @@ pytest
 | `src/fmf/metrics/` | run lengths, detection delay, ARL0 |
 | `src/fmf/datasets/` | dataset loaders |
 | `src/fmf/baselines/` | context models for the expected control effort |
-| `src/fmf/rules/` | rule-based baselines (ASHRAE Guideline 36 AFDD, APAR) |
+| `src/fmf/rules/` | Guideline 36 AFDD fault conditions (Addendum p to G36-2021) |
 | `configs/` | one YAML file per experiment |
 | `experiments/` | reproducible runs writing to `results/` and `paper/figs/` |
 | `scripts/download/` | one download script per dataset, with SHA-256 checksums |
@@ -60,6 +60,7 @@ the points, resolutions and fault-free periods of each set.
 | `experiments/fig_delay_arl.py` | Fig. 4 | ERS residual noise | seconds |
 | `experiments/tab_detection_ers.py` | text (real faults) | ERS faulted days | about 1 min |
 | `experiments/tab_design.py` | text (fleet budget, minimum delay) | formulas only | instant |
+| `experiments/tab_guideline_ers.py` | text (Guideline 36 AFDD baseline) | ERS days | seconds |
 
 Each script reads `configs/<name>.yaml` (fixed seeds), writes intermediate
 results to `results/`, figures to `paper/figs/`, and every number quoted in the
