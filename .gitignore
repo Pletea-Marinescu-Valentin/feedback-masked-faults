@@ -34,6 +34,10 @@ venv/
 .pytest_cache/
 .ipynb_checkpoints/
 
+# IFAC class files: their license forbids redistribution (see paper/README.md)
+paper/ifacconf.cls
+paper/ifacconf.bst
+
 # LaTeX build artifacts
 paper/*.aux
 paper/*.bbl
