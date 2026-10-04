@@ -165,12 +165,16 @@ def test_kappa_mixture_keeps_arl0_and_detects_small_shifts():
 def test_min_delay_matches_e_value_cap():
     from fmf.theory.delay import e_detector_min_delay
 
-    n, alpha, kappas = 450, 1e-3, [0.35, 0.6, 0.85]
-    d = e_detector_min_delay(n, alpha, kappas, dkw_delta=0.05)
-    # The largest possible scores reach exactly the cap: alarm after d observations.
-    calibration = np.random.default_rng(8).standard_normal(n)
-    scores = np.full((int(d) + 5, 1), 1e6)
     from fmf.detectors.sequential import conformal_e_statistic
-    stat = conformal_e_statistic(scores, calibration, kappas, 0.05)
-    assert first_crossing(stat, np.log(1.0 / alpha))[0] + 1 == d
-    assert e_detector_min_delay(n, alpha, kappas, None) < d
+
+    n, alpha = 450, 1e-3
+    calibration = np.random.default_rng(8).standard_normal(n)
+    # Spread grid (one kappa dominates) and close grid (all kappas contribute,
+    # so the alarm comes before the best kappa alone reaches K / alpha).
+    for kappas in ([0.35, 0.6, 0.85], [0.3, 0.32, 0.34, 0.36, 0.38]):
+        d = e_detector_min_delay(n, alpha, kappas, dkw_delta=0.05)
+        # The largest possible scores reach exactly the cap: alarm after d observations.
+        scores = np.full((int(d) + 5, 1), 1e6)
+        stat = conformal_e_statistic(scores, calibration, kappas, 0.05)
+        assert first_crossing(stat, np.log(1.0 / alpha))[0] + 1 == d
+        assert e_detector_min_delay(n, alpha, kappas, None) < d

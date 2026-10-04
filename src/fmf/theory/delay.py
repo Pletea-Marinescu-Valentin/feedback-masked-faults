@@ -93,17 +93,28 @@ def e_detector_min_delay(n: int, alpha: float, kappas: ArrayLike,
 
     With n calibration scores the conformal p-value is at least 1 / (n + 1),
     plus eps = sqrt(ln(1 / delta) / (2 n)) under the DKW correction, so each
-    e-value is at most kappa * p_min^(kappa - 1). The average over K kappas
-    alarms only once the best component reaches K / alpha.
+    e-value is at most c = kappa * p_min^(kappa - 1). Each e-CUSUM grows with
+    every e-value, so it is largest when all of them equal c, where
+    M_t = max(c, c^t); the mixture alarms at the first t at which the average of
+    these over the K kappas reaches 1 / alpha. Scores above every calibration
+    score attain this delay. It lies between ln(1 / alpha) / ln c_max and
+    ln(K / alpha) / ln c_max.
     """
     kappas = np.atleast_1d(np.asarray(kappas, dtype=float))
     p_min = 1.0 / (n + 1.0)
     if dkw_delta is not None:
         p_min += np.sqrt(np.log(1.0 / dkw_delta) / (2.0 * n))
-    best = np.max(np.log(kappas) + (kappas - 1.0) * np.log(p_min))
+    log_c = np.log(kappas) + (kappas - 1.0) * np.log(p_min)
+    best = log_c.max()
     if best <= 0.0:
         return float("inf")
-    return float(np.ceil(np.log(kappas.size / alpha) / best))
+    target = np.log(kappas.size / alpha)
+    first = max(1, int(np.ceil(np.log(1.0 / alpha) / best)))
+    last = int(np.ceil(target / best))
+    for t in range(first, last):
+        if np.logaddexp.reduce(np.maximum(log_c, t * log_c)) >= target:
+            return float(t)
+    return float(last)
 
 
 def cumulative_information_delay(information: ArrayLike, arl0: float) -> np.ndarray:
