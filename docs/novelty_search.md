@@ -59,3 +59,21 @@ doi:10.2139/ssrn.6989092. Check with institutional access.
   calibration-conditional kappa-mixture e-detector; the block-scale study on
   real AHU data. The manuscript states these as contributions without
   priority claims.
+
+## Prior results on the same datasets (2026-10-09)
+
+Works citing Ghalamsiah et al. (2026) or using the real RP-1312 days, found
+with OpenAlex (citations of doi:10.1038/s41597-025-06179-y; queries "ASHRAE
+1312 air handling unit fault detection" and variants, 2022 onwards). Elsevier
+abstracts were not available to the open tools.
+
+| Work | Data | Reported result | Relation to this paper |
+|---|---|---|---|
+| Tra, Amayri and Bouguila (2024), IEEE T-ASE 21(4) | real RP-1312 days | per-sample F1 98.10 / 93.50 / 81.57 % (summer / winter / spring, 10 % missing data), unsupervised | public code (github.com/viettra-xai/DV-MPPCA): threshold = median of the test scores, random sample-level train/test split; no false-alarm rate on healthy units |
+| Jiang (2026), Energy and Buildings 372 | six AHU domains of Ghalamsiah et al., incl. G36-Cyber and G36-HIL | macro-F1 0.790-0.811 within, at most 0.436 / 0.498 on Cyber / HIL | supervised cross-domain classification |
+| Huang et al. (2026, SSRN); Rajabi and McArthur (2026, SSRN); Bi et al. (2026), Applied Energy 426 | simulation-to-real or augmentation on HVAC datasets | no comparable numbers in the abstracts | not cited |
+
+None reports alarm rates on fault-free days or detection delays, so the
+comparison in the paper is on the protocol (thresholds fixed in advance,
+fault-free twin unit as ground truth) and on our own baselines run on the
+same days, not on F1.
