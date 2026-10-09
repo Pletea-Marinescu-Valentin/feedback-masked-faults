@@ -77,3 +77,39 @@ None reports alarm rates on fault-free days or detection delays, so the
 comparison in the paper is on the protocol (thresholds fixed in advance,
 fault-free twin unit as ground truth) and on our own baselines run on the
 same days, not on F1.
+
+### Full texts read (2026-10-09)
+
+The authors supplied the full texts; findings that change or refine the table above:
+
+- Tra et al. (2024): the paper itself (Sec. IV-B) states the random 50/50
+  split and a threshold set so that about half of the test instances are
+  predicted faulty; it also excludes the control signals and uses only the
+  122 sensor values.
+- Jiang (2026): internal domains RBC-5wk, G36-1wk, G36-5wk and G36-Degrad;
+  external G36-Cyber and G36-HIL (no RP-1312 real data). Reports 135-865
+  false alarms per 1000 normal windows on Cyber and 0-324 on HIL, traded
+  against 54-925 missed faults per 1000 fault windows.
+- Yang et al. (2022), SETA 52: moving-window PCA with 95 % SPE limits on 52
+  real fault-free RP-1312 days; daily share of samples with a fault symptom
+  below 10 % on 31 days, 10-47 % on the other 21. Closest false-alarm
+  comparison on the same real days. Cited.
+- Gao, Li and Liang (2025), AEI 65: per-sample FAR 0.59-1.55 % (T2/SPE,
+  GLR, ICA, CCA variants) on sensor faults of 10-15 % of the mean injected
+  offline into AHU-B data, so not masked by the loop. Cited.
+- Zhang et al. (2022), E&B 269, and Zhang et al. (2024), JOBE 96: report
+  detection rates and times only (test sets of 120 normal samples followed by
+  fault samples); no false-alarm rate. Not cited (space).
+- Diallo et al. (2025): Tennessee Eastman; classical T2 (F distribution) and
+  SPE limits, and per-sample conformal thresholds with the DKW-Massart
+  correction following Bates et al. (2023). Confirms both uses in the paper.
+- Prabhu Bam et al. (2024), E&B 313: supervised Neyman-Pearson classifiers on
+  RP-1043 and RP-1312 that bound a per-sample error with high probability;
+  needs labeled faults. Not cited (space).
+- Bi et al. (2026), Applied Energy 426: supervised augmentation, RP-1043 and
+  RP-1312, accuracy and F1. Wan et al. (2026), JOBE 128: LBNL SDAHU data.
+  Not cited.
+
+No paper changes the method: none reports alarm rates over time, detection
+delay against a guaranteed ARL0, or residuals of the control effort for
+masked faults.
