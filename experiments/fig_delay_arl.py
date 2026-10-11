@@ -108,8 +108,8 @@ def main(plot_only=False):
             / ax.get_window_extent(renderer).width)
     lo, at = np.log10(arls[0] * 0.8), np.log10(x_label)
     ax.set_xlim(10.0**lo, 10.0 ** (lo + (at - lo) / (1.0 - room)))
-    ax.set_xlabel(r"Nominal ARL$_0$ [operating days]")
-    ax.set_ylabel("Mean delay [h]")
+    ax.set_xlabel(r"Nominal ARL$_0$ (operating days)")
+    ax.set_ylabel("Mean delay (h)")
     from matplotlib.lines import Line2D
     ax.legend(handles=[Line2D([], [], color=INK_MUTED, marker="o", ms=3, label="e-detector, DKW"),
                        Line2D([], [], color=INK_MUTED, ls="--", marker="s", mfc="white", ms=3,

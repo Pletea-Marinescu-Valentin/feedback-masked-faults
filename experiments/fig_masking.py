@@ -54,7 +54,7 @@ def main():
     ax1.plot(hours, smooth(runs["bias"].y, k), color=ORANGE, lw=0.9, ls="-.",
              label="true, bias")
     ax1.axhline(13.0, color=INK_MUTED, lw=0.6, zorder=0)
-    ax1.set_ylabel("Supply air [°C]")
+    ax1.set_ylabel("Supply air (°C)")
     ax1.set_ylim(10.55, 13.45)
     ax1.legend(ncol=2, loc="lower center", columnspacing=1.0)
 
@@ -65,8 +65,8 @@ def main():
                  label=name)
         if pred is not None:
             ax2.plot(hours, pred, color=color, lw=1.6, alpha=0.35)
-    ax2.set_ylabel(r"$u-\hat u(z)$")
-    ax2.set_xlabel("Time [h]")
+    ax2.set_ylabel(r"Residual $u-\hat u(z)$")
+    ax2.set_xlabel("Time (h)")
     ax2.set_xlim(0, hours[-1])
     ax2.set_xticks(np.arange(0, hours[-1] + 1, 12))
     handles, labels = ax2.get_legend_handles_labels()

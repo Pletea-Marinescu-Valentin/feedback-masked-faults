@@ -112,7 +112,7 @@ def main(plot_only=False):
             ax.plot(weekly.index * 7.0 + 3.5, weekly.to_numpy(), color=COLORS[a], ls=STYLES[a],
                     lw=1.0, label=LABELS[a])
         ax.axhline(0.0, color=INK_MUTED, lw=0.5, zorder=0)
-        ax.set_ylabel(r"$\Delta u$")
+        ax.set_ylabel(r"Shift $\Delta u$")
         lo, hi = ax.get_ylim()
         ax.set_ylim(lo, hi + 0.55 * (hi - lo))
         ax.legend(loc="upper left", ncol=3 if len(spec["actuators"]) > 2 else 2,
@@ -140,7 +140,7 @@ def main(plot_only=False):
     ax.axhline(payload["threshold"], color=INK_MUTED, lw=0.6, ls="--", zorder=0)
     ax.set_yscale("log")
     ax.set_ylim(0.1, 4e4)
-    ax.set_ylabel(r"$\sum I_k$ [nat]")
+    ax.set_ylabel(r"Information $\sum I_k$ (nat)")
     ax.set_xlabel("Day of year")
     ax.set_xlim(0, 365)
     for a, tag in zip(axes, ("(a)", "(b)", "(c)")):

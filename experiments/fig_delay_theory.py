@@ -142,10 +142,10 @@ def main(plot_only=False):
         ax.set_aspect("equal")
     ax1.set_xticks([0.1, 1, 10, 100])
     ax1.set_yticks([0.1, 1, 10, 100])
-    ax1.set_xlabel("Predicted information [nat/h]")
-    ax1.set_ylabel("Measured [nat/h]")
-    ax2.set_xlabel("Predicted delay [h]")
-    ax2.set_ylabel("Measured delay [h]")
+    ax1.set_xlabel("Predicted information (nat/h)")
+    ax1.set_ylabel("Measured information (nat/h)")
+    ax2.set_xlabel("Predicted delay (h)")
+    ax2.set_ylabel("Measured delay (h)")
     handles = [Line2D([], [], ls="", marker="o", color=BLUE, ms=3.2, label="bias"),
                Line2D([], [], ls="", marker="o", color=ORANGE, ms=3.2, label="fouling"),
                Line2D([], [], ls="", marker="s", color=INK_MUTED, ms=3.2, label="eq.-% valve"),
