@@ -2,15 +2,21 @@
 
 import json
 import sys
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 from _common import RESULTS, TABLES, load_config, write_numbers, write_results
 from fmf.baselines.pca_monitor import PCAMonitor
-from fmf.datasets.ghalamsiah2026 import ers_days, load_ers
+from fmf.datasets.ghalamsiah2026 import ERS_REAL, ers_days, load_ers
 
 NAME = "tab_pca_ers"
+
+
+def day_id(folder):
+    """Season/date of an ERS test day, independent of where the data live."""
+    return Path(folder).relative_to(ERS_REAL).as_posix()
 
 
 def occupied(d):
@@ -49,7 +55,7 @@ def main(tables_only=False):
             for folder in test_days:
                 d = occupied(load_ers(folder))[feats].to_numpy()
                 t2, spe = model.statistics(d)
-                rows.append({"group": group, "unit": "fault-free test", "folder": str(folder),
+                rows.append({"group": group, "unit": "fault-free test", "folder": day_id(folder),
                              "fault": None, "events": events((t2 > t2_lim) | (spe > spe_lim))})
             for _, r in sel.iterrows():
                 d = occupied(load_ers(r.folder, "fault"))
@@ -57,7 +63,7 @@ def main(tables_only=False):
                 flags = (t2 > t2_lim) | (spe > spe_lim)
                 first = (d.index[int(np.argmax(flags))] - d.index[0]).total_seconds() / 3600.0 \
                     if flags.any() else None
-                rows.append({"group": group, "unit": "faulted", "folder": str(r.folder),
+                rows.append({"group": group, "unit": "faulted", "folder": day_id(r.folder),
                              "fault": r.fault, "events": events(flags),
                              "first_alarm_hours_after_start": first})
         payload = {"config": cfg, "groups": groups, "rows": rows}
