@@ -1,4 +1,4 @@
-# Fig. 2: seasonal information windows on G36-Degrad (one year, 5-min samples).
+# Fig. 3: seasonal information windows on G36-Degrad (one year, 5-min samples).
 # Fault signatures are paired differences u_fault - u_baseline (identical weather
 # and schedules in both runs); noise per actuator is the hourly spread of the
 # out-of-fold residual on the real ERS fault-free days (ers_noise below).

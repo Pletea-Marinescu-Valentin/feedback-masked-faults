@@ -1,4 +1,4 @@
-# Fig. 4: measured vs predicted detection delay on the synthetic loop.
+# Fig. 2: measured vs predicted detection delay on the synthetic loop.
 # The prediction uses only the CV-equivalent fault size m_eq and the long-run
 # variance of the CV-referred noise; tuning, valve law and fault type vary.
 seed: 7

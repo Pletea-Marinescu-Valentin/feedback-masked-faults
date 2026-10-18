@@ -1,4 +1,4 @@
-"""Fig. 4: the delay is set by m_eq and the long-run CV-referred noise.
+"""Fig. 2: the delay is set by m_eq and the long-run CV-referred noise.
 
 For each loop (valve law, PI gain), fault (sensor bias or coil fouling) and
 disturbance level, a fault-free calibration run gives an AR model of the

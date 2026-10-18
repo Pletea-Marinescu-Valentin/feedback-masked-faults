@@ -1,4 +1,4 @@
-"""Fig. 2: where and when a masked fault carries information over a year (G36-Degrad).
+"""Fig. 3: where and when a masked fault carries information over a year (G36-Degrad).
 
 Signatures: hourly means of u_fault - u_baseline during occupied hours, for each
 actuator of the supply-air sequence (heating valve, outdoor-air damper,
