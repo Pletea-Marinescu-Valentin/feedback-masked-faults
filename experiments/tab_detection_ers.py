@@ -8,10 +8,13 @@ sided, nominal ARL0 = 30 days):
     the fault (cooling valve, heating valve or supply fan);
   - the controlled-variable residual y - y_hat(z) of the supply-air
     temperature or duct static pressure, as a CV-only virtual sensor would.
-The same detectors also run on the fault-free unit of the same day as a
-control. Unit A has no fault-free days in this dataset, so differences between
-the two units are not separable from fault effects; the control column shows
-how often unit B alarms on its own day.
+Each fault lasts one day, so each faulted day is a separate run. Unit A has no
+fault-free days in this dataset, so differences between the two units are not
+separable from fault effects. As a control, unit B is monitored with the same
+detectors calibrated on the other chronological half of its days (within
+seasons, both ways); the stream runs through its days in order and restarts
+only after an alarm (ADR 0007), so that no control day is part of its own
+calibration set and evidence can accumulate beyond the minimum delay.
 """
 
 import json
@@ -40,23 +43,61 @@ def hourly(x, size):
     return x[: k * size].reshape(k, size).mean(axis=1)
 
 
+def alarms_by_sign(z, calibration, cfg, threshold):
+    """Alarm indices of the two one-sided detectors (restart after each alarm)."""
+    return {sign: count_alarms(lambda s: conformal_e_statistic(
+        s, sign * calibration, cfg["block_kappas"], cfg["dkw_delta"]), sign * z, threshold)
+        for sign in (1.0, -1.0)}
+
+
 def first_alarm(z, calibration, cfg, threshold):
     """Hour index of the first alarm on either side, and its sign (+1, -1 or 0)."""
     best = (np.inf, 0)
-    for sign in (1.0, -1.0):
-        alarms = count_alarms(lambda s: conformal_e_statistic(
-            s, sign * calibration, cfg["block_kappas"], cfg["dkw_delta"]), sign * z, threshold)
+    for sign, alarms in alarms_by_sign(z, calibration, cfg, threshold).items():
         if alarms and alarms[0] < best[0]:
             best = (alarms[0], int(sign))
     return best
 
 
+def halves(days):
+    """Chronological halves of the test days within each season (first rounded up)."""
+    first, second = [], []
+    for _, g in days.groupby("season"):
+        dates = sorted(g.date)
+        k = (len(dates) + 1) // 2
+        first += dates[:k]
+        second += dates[k:]
+    return first, second
+
+
+def control_alarms(base, days, spec, cfg, threshold):
+    """Alarms on the fault-free unit, each half monitored with the other half as calibration."""
+    target, feats, block = spec["target"], spec["features"], cfg["block_minutes"]
+    first, second = halves(days)
+    alarms = 0
+    for cal_days, ctrl_days in ((first, second), (second, first)):
+        cal, ctrl = base[base.day.isin(cal_days)], base[base.day.isin(ctrl_days)]
+        oof = cal[target].to_numpy() - cross_fit_predict(cal, feats, target, cal.day,
+                                                         cfg["lightgbm"], cfg["seed"])
+        res = ctrl[target].to_numpy() - fit_predict(cal, ctrl, feats, target, cfg["lightgbm"],
+                                                    cfg["seed"])
+        b_cal = np.concatenate([hourly(oof[(cal.day == d).to_numpy()], block)
+                                for d in sorted(cal_days)])
+        scale = b_cal.std()
+        z = np.concatenate([hourly(res[(ctrl.day == d).to_numpy()], block)
+                            for d in sorted(ctrl_days)]) / scale
+        found = alarms_by_sign(z, b_cal / scale, cfg, threshold)
+        alarms += sum(len(a) for a in found.values())
+    return alarms
+
+
 def main(tables_only=False):
     cfg = load_config(NAME)
     if tables_only:
-        rows = json.loads((RESULTS / f"{NAME}.json").read_text())["rows"]
+        payload = json.loads((RESULTS / f"{NAME}.json").read_text())
+        rows, controls = payload["rows"], payload["controls"]
     else:
-        rows = []
+        rows, controls = [], []
         days = ers_days()
         for spec in cfg["monitors"]:
             seasons, target, feats = spec["seasons"], spec["target"], spec["features"]
@@ -79,8 +120,6 @@ def main(tables_only=False):
                                                              cfg["lightgbm"], cfg["seed"])
                 z = hourly(res, block) / scale
                 hour, sign = first_alarm(z, b_cal, cfg, threshold)
-                ctrl_hour, ctrl_sign = first_alarm(hourly(per_day[r.date], block) / scale,
-                                                   b_cal, cfg, threshold)
                 rows.append({
                     "monitor": spec["name"], "kind": spec["kind"], "season": r.season,
                     "date": str(r.date.date()), "fault": r.fault,
@@ -88,14 +127,20 @@ def main(tables_only=False):
                     "z_day": float(res.mean() / day_sd), "hours": int(len(z)),
                     "alarm_hour": None if np.isinf(hour) else int(hour) + 1,
                     "alarm_sign": sign,
-                    "control_alarm_hour": None if np.isinf(ctrl_hour) else int(ctrl_hour) + 1,
                 })
-        write_results(NAME, {"config": cfg, "rows": rows})
+            controls.append({"monitor": spec["name"], "kind": spec["kind"],
+                             "days": int(len(sel)),
+                             "hours": int(sum(len(x) // block for x in per_day.values())),
+                             "alarms": control_alarms(base, sel, spec, cfg, threshold)})
+        write_results(NAME, {"config": cfg, "rows": rows, "controls": controls})
     table = pd.DataFrame(rows)
+    control = pd.DataFrame(controls)
     TABLES.mkdir(parents=True, exist_ok=True)
     table.to_csv(TABLES / f"{NAME}.csv", index=False)
+    control.to_csv(TABLES / f"{NAME}_control.csv", index=False)
     pd.set_option("display.width", 220)
     print(table.to_string())
+    print(control.to_string())
 
     def summary(monitor, faults):
         sel = table[(table.monitor == monitor) & table.fault.isin(faults)]
@@ -121,9 +166,8 @@ def main(tables_only=False):
     numbers["leak effort z min"] = f"{effort_z.min():.1f}"
     numbers["leak effort z max"] = f"{effort_z.max():.1f}"
     numbers["leak cv z max"] = f"{cv_z.max():.1f}"
-    ctrl = table.drop_duplicates(["monitor", "date"])
-    numbers["control alarms"] = f"{int(ctrl.control_alarm_hour.notna().sum())}"
-    numbers["control runs"] = f"{len(ctrl)}"
+    numbers["control alarms"] = f"{int(control.alarms.sum())}"
+    numbers["control days"] = f"{int(control.days.sum())}"
     write_numbers(NAME, numbers)
 
 

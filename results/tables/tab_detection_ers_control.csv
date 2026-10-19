@@ -1,0 +1,7 @@
+monitor,kind,days,hours,alarms
+cooling valve,effort,37,472,1
+heating valve,effort,12,134,0
+supply fan,effort,49,606,0
+supply air temperature cooling,cv,37,472,0
+supply air temperature heating,cv,12,134,0
+duct static pressure,cv,49,606,0

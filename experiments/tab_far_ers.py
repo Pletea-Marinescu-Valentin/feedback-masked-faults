@@ -8,9 +8,13 @@ residuals, and the test half is monitored by
     the DKW correction, on the same innovations,
   - the Gaussian CUSUM and the conformal e-detector (with and without DKW) on
     hourly means of the residual, standardized by their calibration spread.
-Every detector is two-sided (one stream per sign, alpha / 2 each) and restarts
-after each alarm and at the start of each day. The table compares false
-alarms per day of operation with the nominal rate 1 / ARL0.
+Every detector is two-sided: one stream per sign at alpha / 2, with the
+calibration scores signed like the test scores. Each stream runs through the
+test days in chronological order and restarts only after an alarm (ADR 0007):
+with restarts after alarms the expected number of false alarms in T
+observations is at most alpha T, and the hourly e-detectors need more than one
+day of operation to reach their minimum delay. The table compares false alarms
+per day of operation with the nominal rate 1 / ARL0.
 """
 
 import json
@@ -96,30 +100,31 @@ def evaluate_target(cfg, target, seasons):
     rows = []
     for arl0_days in cfg["arl0_days"]:
         arl0 = arl0_days * samples_per_day  # samples
+        # stat(z, sign): one-sided statistic on the signed stream z = sign * x;
+        # conformal detectors compare it with the calibration scores of that sign.
         detectors = {
-            "Gaussian CUSUM, 1 min": (w_test, lambda z: gaussian_cusum_statistic(z, shift),
+            "Gaussian CUSUM, 1 min": (w_test, lambda z, s: gaussian_cusum_statistic(z, shift),
                                       gaussian_cusum_threshold(2.0 * arl0, shift), 1),
-            "e-detector, 1 min": (w_test, lambda z: conformal_e_statistic(
-                z, w_cal_flat, cfg["kappas"], cfg["dkw_delta"]), np.log(2.0 * arl0), 1),
-            "e-detector, 1 min, no DKW": (w_test, lambda z: conformal_e_statistic(
-                z, w_cal_flat, cfg["kappas"], None), np.log(2.0 * arl0), 1),
+            "e-detector, 1 min": (w_test, lambda z, s: conformal_e_statistic(
+                z, s * w_cal_flat, cfg["kappas"], cfg["dkw_delta"]), np.log(2.0 * arl0), 1),
+            "e-detector, 1 min, no DKW": (w_test, lambda z, s: conformal_e_statistic(
+                z, s * w_cal_flat, cfg["kappas"], None), np.log(2.0 * arl0), 1),
         }
         for size, (b_cal, b_test, b_shift) in blocks.items():
             arl0_b = 2.0 * arl0 / size
             detectors[f"Gaussian CUSUM, {size} min"] = (
-                b_test, lambda z, b=b_shift: gaussian_cusum_statistic(z, b),
+                b_test, lambda z, s, b=b_shift: gaussian_cusum_statistic(z, b),
                 gaussian_cusum_threshold(arl0_b, b_shift), size)
             detectors[f"e-detector, {size} min"] = (
-                b_test, lambda z, c=b_cal: conformal_e_statistic(
-                    z, c, cfg["block_kappas"], cfg["dkw_delta"]), np.log(arl0_b), size)
+                b_test, lambda z, s, c=b_cal: conformal_e_statistic(
+                    z, s * c, cfg["block_kappas"], cfg["dkw_delta"]), np.log(arl0_b), size)
             detectors[f"e-detector, {size} min, no DKW"] = (
-                b_test, lambda z, c=b_cal: conformal_e_statistic(
-                    z, c, cfg["block_kappas"], None), np.log(arl0_b), size)
+                b_test, lambda z, s, c=b_cal: conformal_e_statistic(
+                    z, s * c, cfg["block_kappas"], None), np.log(arl0_b), size)
         for name, (streams, stat, h, size) in detectors.items():
-            alarms = 0
-            for x in streams:
-                for sign in (1.0, -1.0):
-                    alarms += len(count_alarms(stat, sign * x, h))
+            stream = np.concatenate(streams)  # test days in chronological order
+            alarms = sum(len(count_alarms(lambda z, s=sign: stat(z, s), sign * stream, h))
+                         for sign in (1.0, -1.0))
             kappas = cfg["kappas"] if size == 1 else cfg["block_kappas"]
             n_cal = w_cal_flat.size if size == 1 else blocks[size][0].size
             d_min = (e_detector_min_delay(n_cal, size / (2.0 * arl0), kappas,

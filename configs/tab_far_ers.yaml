@@ -1,7 +1,8 @@
 # Table: false alarms of sequential detectors on real fault-free ERS days.
 # Each season's days are split chronologically: the first half calibrates the
 # baseline model, the AR model and the conformal scores; the second half is
-# the test set. The detector state restarts at every alarm and every day.
+# the test set. Detectors run through the test days in chronological order and
+# restart only after an alarm (ADR 0007).
 seed: 0
 ar_order: 8
 targets:

@@ -132,13 +132,13 @@ and writes:
 | `experiments/fig_delay_theory.py` | Fig. 2, predicted vs. measured information and delay | synthetic, 40 conditions | 2 min 45 s |
 | `experiments/fig_seasonal.py` | Fig. 3, seasonal information windows | G36-Degrad + ERS noise | 35 s |
 | `experiments/fig_delay_arl.py` | Fig. 4, mean delay vs. nominal ARL₀ | ERS residual noise | 10 s |
-| `experiments/tab_far_ers.py` | Table 1, false alarms on real fault-free days | ERS | 11 s |
-| `experiments/tab_detection_ers.py` | Sec. 5, real faulted and fault-free units | ERS | 1 min 20 s |
+| `experiments/tab_far_ers.py` | Table 1, false alarms on real fault-free days | ERS | 12 s |
+| `experiments/tab_detection_ers.py` | Sec. 5, real faulted and fault-free units | ERS | 1 min 40 s |
 | `experiments/tab_guideline_ers.py` | Sec. 5, Guideline 36 AFDD baseline | ERS | 13 s |
 | `experiments/tab_pca_ers.py` | Sec. 5, PCA T²/SPE baseline | ERS | 4 s |
 | `experiments/tab_design.py` | Sec. 6, fleet alarm budget and minimum delay | formulas only | 1 s |
 
-\* Measured on a 16-thread x86-64 laptop; about 5.5 minutes in total.
+\* Measured on a 16-thread x86-64 laptop; about 6 minutes in total.
 
 The two longest scripts accept `--plot-only` to redraw a figure from
 `results/<name>.json` without recomputing it.
