@@ -1,0 +1,13 @@
+# Baseline: PCA monitoring (T^2 and SPE, classical limits) on real ERS days.
+# Same split as tab_far_ers: first half of each season's fault-free days
+# calibrate, second half test. Per-sample alpha = 1 / (ARL0 in samples),
+# shared equally by T^2 and SPE; an alarm event is a run of exceedances.
+variance: 0.9
+arl0_days: 30
+groups:
+  cooling: [Summer, Transition]
+  heating: [Winter]
+features: [mat, oat, rat, sat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, dsp, ccv_cmd, hcv_cmd, fan_cmd, oad_cmd]
+masked:
+  leak: [HeaCoiValLeak_0.4, HeaCoiValLea_1, HeaCoiValLa_2]
+  capacity: [HeaCoiFou_1, HeaCoiFou_2, HeatCoiReduCapa_1, HeatCoiReduCapa_2, HeatCoiReduCapa_3]

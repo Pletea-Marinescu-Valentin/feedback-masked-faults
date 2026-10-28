@@ -1,0 +1,12 @@
+# Design numbers quoted in the discussion: fleet alarm budget and the minimum
+# alarm delay of the hourly e-detector as a function of calibration length.
+fleet_loops: 200
+statistic_period_days: 1
+budget_alarms: 2
+budget_horizon_days: 30
+hours_per_day: 12              # operating hours per day
+block_hours: 1
+kappas: [0.35, 0.6, 0.85]
+dkw_delta: 0.05
+calibration_days: [30, 90, 365]
+arl0_days: [30, 3000]

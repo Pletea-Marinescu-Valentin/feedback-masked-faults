@@ -1,0 +1,22 @@
+# Table: alarms on real faulted ERS days (unit A) with detectors calibrated on
+# the fault-free twin (unit B). Hourly conformal e-detector with DKW, two-sided.
+seed: 0
+arl0_days: 30
+block_minutes: 60
+dkw_delta: 0.05
+block_kappas: [0.35, 0.6, 0.85]
+lightgbm: {n_estimators: 300, learning_rate: 0.05, num_leaves: 15, min_child_samples: 50,
+           subsample: 0.8, subsample_freq: 1, colsample_bytree: 0.8}
+coil_features: &coil [mat, oat, rat, sat_sp, sa_cfm, chw_ewt, hw_ewt, ra_humd, hour]
+fan_features: &fan [sa_cfm, dsp_sp, oad_cmd, mat, oat, hour]
+monitors:
+  - {name: cooling valve, kind: effort, target: ccv_cmd, seasons: [Summer, Transition], features: *coil}
+  - {name: heating valve, kind: effort, target: hcv_cmd, seasons: [Winter], features: *coil}
+  - {name: supply fan, kind: effort, target: fan_cmd, seasons: [Summer, Transition, Winter], features: *fan}
+  - {name: supply air temperature cooling, kind: cv, target: sat, seasons: [Summer, Transition], features: *coil}
+  - {name: supply air temperature heating, kind: cv, target: sat, seasons: [Winter], features: *coil}
+  - {name: duct static pressure, kind: cv, target: dsp, seasons: [Summer, Transition, Winter], features: *fan}
+masked:   # faults compensated by the loop (file names as in the dataset)
+  leak: [HeaCoiValLeak_0.4, HeaCoiValLea_1, HeaCoiValLa_2]
+  capacity: [HeaCoiFou_1, HeaCoiFou_2, HeatCoiReduCapa_1, HeatCoiReduCapa_2, HeatCoiReduCapa_3]
+  airside: [AirFilBlock_10, AirFilBlock_25, SupDucLea_AfterSF, SupDucLea_BeforeSF]

@@ -1,0 +1,197 @@
+sensors,season,date,fault,unit,alarms,first_alarm_hour
+dedicated coil sensors,Summer,2007-08-20,EADamStuck_100,fault-free,,
+dedicated coil sensors,Summer,2007-08-20,EADamStuck_100,faulted,,
+dedicated coil sensors,Summer,2007-08-21,EADamStuck_0,fault-free,FC13,17.033333333333335
+dedicated coil sensors,Summer,2007-08-21,EADamStuck_0,faulted,,
+dedicated coil sensors,Summer,2007-08-22,RetFanFixed_30,fault-free,,
+dedicated coil sensors,Summer,2007-08-22,RetFanFixed_30,faulted,FC13,9.766666666666667
+dedicated coil sensors,Summer,2007-08-23,RetFan_Fail,fault-free,,
+dedicated coil sensors,Summer,2007-08-23,RetFan_Fail,faulted,FC13,15.733333333333333
+dedicated coil sensors,Summer,2007-08-24,ConCooCoiVal_Unst,fault-free,,
+dedicated coil sensors,Summer,2007-08-24,ConCooCoiVal_Unst,faulted,FC1 FC13 FC4,14.7
+dedicated coil sensors,Summer,2007-08-26,OADamStuck_0,fault-free,,
+dedicated coil sensors,Summer,2007-08-26,OADamStuck_0,faulted,FC1,7.0
+dedicated coil sensors,Summer,2007-08-27,CooCoiValStuck_0,fault-free,FC13,14.133333333333333
+dedicated coil sensors,Summer,2007-08-27,CooCoiValStuck_0,faulted,FC1,8.016666666666667
+dedicated coil sensors,Summer,2007-08-28,HeaCoiValLeak_0.4,fault-free,,
+dedicated coil sensors,Summer,2007-08-28,HeaCoiValLeak_0.4,faulted,FC13,9.45
+dedicated coil sensors,Summer,2007-08-29,HeaCoiValLea_1,fault-free,,
+dedicated coil sensors,Summer,2007-08-29,HeaCoiValLea_1,faulted,FC15,9.116666666666667
+dedicated coil sensors,Summer,2007-08-30,HeaCoiValLa_2,fault-free,,
+dedicated coil sensors,Summer,2007-08-30,HeaCoiValLa_2,faulted,FC15,9.1
+dedicated coil sensors,Summer,2007-08-31,CooCoiValStuck_100,fault-free,,
+dedicated coil sensors,Summer,2007-08-31,CooCoiValStuck_100,faulted,,
+dedicated coil sensors,Summer,2007-09-01,CooCoiValStuck_15,fault-free,,
+dedicated coil sensors,Summer,2007-09-01,CooCoiValStuck_15,faulted,FC1,10.216666666666667
+dedicated coil sensors,Summer,2007-09-02,CooCoiValStuck_65,fault-free,,
+dedicated coil sensors,Summer,2007-09-02,CooCoiValStuck_65,faulted,,
+dedicated coil sensors,Summer,2007-09-03,CooCoiVal_Reverse,fault-free,,
+dedicated coil sensors,Summer,2007-09-03,CooCoiVal_Reverse,faulted,,
+dedicated coil sensors,Summer,2007-09-05,OADamLeak_45,fault-free,,
+dedicated coil sensors,Summer,2007-09-05,OADamLeak_45,faulted,,
+dedicated coil sensors,Summer,2007-09-06,OADamLeak_55,fault-free,,
+dedicated coil sensors,Summer,2007-09-06,OADamLeak_55,faulted,,
+dedicated coil sensors,Summer,2007-09-07,SupDucLea_AfterSF,fault-free,,
+dedicated coil sensors,Summer,2007-09-07,SupDucLea_AfterSF,faulted,,
+dedicated coil sensors,Summer,2007-09-08,SupDucLea_BeforeSF,fault-free,,
+dedicated coil sensors,Summer,2007-09-08,SupDucLea_BeforeSF,faulted,,
+dedicated coil sensors,Transition,2008-05-06,CooCoiVal_Stuck_0,fault-free,,
+dedicated coil sensors,Transition,2008-05-06,CooCoiVal_Stuck_0,faulted,FC1,12.266666666666667
+dedicated coil sensors,Transition,2008-05-07,OADamStuck_0,fault-free,,
+dedicated coil sensors,Transition,2008-05-07,OADamStuck_0,faulted,FC1,7.0
+dedicated coil sensors,Transition,2008-05-08,OADamStuck_40,fault-free,FC11,7.0
+dedicated coil sensors,Transition,2008-05-08,OADamStuck_40,faulted,FC1,7.866666666666666
+dedicated coil sensors,Transition,2008-05-10,EADamStuck_0,fault-free,,
+dedicated coil sensors,Transition,2008-05-10,EADamStuck_0,faulted,,
+dedicated coil sensors,Transition,2008-05-11,EADamStuck_40,fault-free,,
+dedicated coil sensors,Transition,2008-05-11,EADamStuck_40,faulted,,
+dedicated coil sensors,Transition,2008-05-12,RetFan_Fail,fault-free,,
+dedicated coil sensors,Transition,2008-05-12,RetFan_Fail,faulted,,
+dedicated coil sensors,Transition,2008-05-13,MADam_Unst,fault-free,,
+dedicated coil sensors,Transition,2008-05-13,MADam_Unst,faulted,FC4,7.05
+dedicated coil sensors,Transition,2008-05-14,Con_MADam_CooCoi_Unst,fault-free,,
+dedicated coil sensors,Transition,2008-05-14,Con_MADam_CooCoi_Unst,faulted,FC4,5.25
+dedicated coil sensors,Transition,2008-05-15,CooCoilValStuck_100,fault-free,,
+dedicated coil sensors,Transition,2008-05-15,CooCoilValStuck_100,faulted,,
+dedicated coil sensors,Transition,2008-05-16,CooCoilValStuck_50,fault-free,,
+dedicated coil sensors,Transition,2008-05-16,CooCoilValStuck_50,faulted,,
+dedicated coil sensors,Transition,2008-05-17,HeaCooSeq_Unst,fault-free,,
+dedicated coil sensors,Transition,2008-05-17,HeaCooSeq_Unst,faulted,FC4,5.0
+dedicated coil sensors,Transition,2008-05-18,RetFanFixed_20,fault-free,,
+dedicated coil sensors,Transition,2008-05-18,RetFanFixed_20,faulted,,
+dedicated coil sensors,Transition,2008-05-19,RetFanFixed_80,fault-free,,
+dedicated coil sensors,Transition,2008-05-19,RetFanFixed_80,faulted,,
+dedicated coil sensors,Transition,2008-05-22,AirFilBlock_10,fault-free,,
+dedicated coil sensors,Transition,2008-05-22,AirFilBlock_10,faulted,,
+dedicated coil sensors,Transition,2008-05-25,AirFilBlock_25,fault-free,FC1 FC13,15.216666666666667
+dedicated coil sensors,Transition,2008-05-25,AirFilBlock_25,faulted,FC13,12.1
+dedicated coil sensors,Transition,2008-05-27,EADamStuck_100,fault-free,,
+dedicated coil sensors,Transition,2008-05-27,EADamStuck_100,faulted,,
+dedicated coil sensors,Transition,2008-05-29,TOut_p3,fault-free,,
+dedicated coil sensors,Transition,2008-05-29,TOut_p3,faulted,,
+dedicated coil sensors,Transition,2008-05-30,TOut_m3,fault-free,FC13,11.933333333333334
+dedicated coil sensors,Transition,2008-05-30,TOut_m3,faulted,FC13,11.5
+dedicated coil sensors,Transition,2008-06-01,ConSupFan_Unst,fault-free,,
+dedicated coil sensors,Transition,2008-06-01,ConSupFan_Unst,faulted,,
+dedicated coil sensors,Winter,2008-02-02,EADamStuck_100,fault-free,,
+dedicated coil sensors,Winter,2008-02-02,EADamStuck_100,faulted,,
+dedicated coil sensors,Winter,2008-02-03,EADamStuck_0,fault-free,,
+dedicated coil sensors,Winter,2008-02-03,EADamStuck_0,faulted,,
+dedicated coil sensors,Winter,2008-02-05,HeaCoiFou_1,fault-free,,
+dedicated coil sensors,Winter,2008-02-05,HeaCoiFou_1,faulted,,
+dedicated coil sensors,Winter,2008-02-06,HeaCoiFou_2,fault-free,,
+dedicated coil sensors,Winter,2008-02-06,HeaCoiFou_2,faulted,FC1,7.766666666666667
+dedicated coil sensors,Winter,2008-02-07,HeatCoiReduCapa_1,fault-free,,
+dedicated coil sensors,Winter,2008-02-07,HeatCoiReduCapa_1,faulted,,
+dedicated coil sensors,Winter,2008-02-08,HeatCoiReduCapa_2,fault-free,,
+dedicated coil sensors,Winter,2008-02-08,HeatCoiReduCapa_2,faulted,,
+dedicated coil sensors,Winter,2008-02-09,HeatCoiReduCapa_3,fault-free,,
+dedicated coil sensors,Winter,2008-02-09,HeatCoiReduCapa_3,faulted,,
+dedicated coil sensors,Winter,2008-02-10,CooCoiValStuck_100,fault-free,,
+dedicated coil sensors,Winter,2008-02-10,CooCoiValStuck_100,faulted,,
+dedicated coil sensors,Winter,2008-02-11,CooCoiValStuck_20,fault-free,,
+dedicated coil sensors,Winter,2008-02-11,CooCoiValStuck_20,faulted,,
+dedicated coil sensors,Winter,2008-02-12,OADamStuck_0,fault-free,,
+dedicated coil sensors,Winter,2008-02-12,OADamStuck_0,faulted,FC1,7.033333333333333
+dedicated coil sensors,Winter,2008-02-13,OADamLea_52,fault-free,,
+dedicated coil sensors,Winter,2008-02-13,OADamLea_52,faulted,,
+dedicated coil sensors,Winter,2008-02-15,EADamLea_62,fault-free,,
+dedicated coil sensors,Winter,2008-02-15,EADamLea_62,faulted,,
+MAT and SAT only,Summer,2007-08-20,EADamStuck_100,fault-free,,
+MAT and SAT only,Summer,2007-08-20,EADamStuck_100,faulted,,
+MAT and SAT only,Summer,2007-08-21,EADamStuck_0,fault-free,FC13,17.033333333333335
+MAT and SAT only,Summer,2007-08-21,EADamStuck_0,faulted,,
+MAT and SAT only,Summer,2007-08-22,RetFanFixed_30,fault-free,,
+MAT and SAT only,Summer,2007-08-22,RetFanFixed_30,faulted,FC13,9.766666666666667
+MAT and SAT only,Summer,2007-08-23,RetFan_Fail,fault-free,,
+MAT and SAT only,Summer,2007-08-23,RetFan_Fail,faulted,FC13,15.733333333333333
+MAT and SAT only,Summer,2007-08-24,ConCooCoiVal_Unst,fault-free,,
+MAT and SAT only,Summer,2007-08-24,ConCooCoiVal_Unst,faulted,FC1 FC13 FC4,14.7
+MAT and SAT only,Summer,2007-08-26,OADamStuck_0,fault-free,,
+MAT and SAT only,Summer,2007-08-26,OADamStuck_0,faulted,FC1,7.0
+MAT and SAT only,Summer,2007-08-27,CooCoiValStuck_0,fault-free,FC13,14.133333333333333
+MAT and SAT only,Summer,2007-08-27,CooCoiValStuck_0,faulted,FC1,8.016666666666667
+MAT and SAT only,Summer,2007-08-28,HeaCoiValLeak_0.4,fault-free,,
+MAT and SAT only,Summer,2007-08-28,HeaCoiValLeak_0.4,faulted,FC13,9.45
+MAT and SAT only,Summer,2007-08-29,HeaCoiValLea_1,fault-free,,
+MAT and SAT only,Summer,2007-08-29,HeaCoiValLea_1,faulted,,
+MAT and SAT only,Summer,2007-08-30,HeaCoiValLa_2,fault-free,,
+MAT and SAT only,Summer,2007-08-30,HeaCoiValLa_2,faulted,,
+MAT and SAT only,Summer,2007-08-31,CooCoiValStuck_100,fault-free,,
+MAT and SAT only,Summer,2007-08-31,CooCoiValStuck_100,faulted,,
+MAT and SAT only,Summer,2007-09-01,CooCoiValStuck_15,fault-free,,
+MAT and SAT only,Summer,2007-09-01,CooCoiValStuck_15,faulted,FC1,10.216666666666667
+MAT and SAT only,Summer,2007-09-02,CooCoiValStuck_65,fault-free,,
+MAT and SAT only,Summer,2007-09-02,CooCoiValStuck_65,faulted,,
+MAT and SAT only,Summer,2007-09-03,CooCoiVal_Reverse,fault-free,,
+MAT and SAT only,Summer,2007-09-03,CooCoiVal_Reverse,faulted,,
+MAT and SAT only,Summer,2007-09-05,OADamLeak_45,fault-free,,
+MAT and SAT only,Summer,2007-09-05,OADamLeak_45,faulted,,
+MAT and SAT only,Summer,2007-09-06,OADamLeak_55,fault-free,,
+MAT and SAT only,Summer,2007-09-06,OADamLeak_55,faulted,,
+MAT and SAT only,Summer,2007-09-07,SupDucLea_AfterSF,fault-free,,
+MAT and SAT only,Summer,2007-09-07,SupDucLea_AfterSF,faulted,,
+MAT and SAT only,Summer,2007-09-08,SupDucLea_BeforeSF,fault-free,,
+MAT and SAT only,Summer,2007-09-08,SupDucLea_BeforeSF,faulted,,
+MAT and SAT only,Transition,2008-05-06,CooCoiVal_Stuck_0,fault-free,,
+MAT and SAT only,Transition,2008-05-06,CooCoiVal_Stuck_0,faulted,FC1,12.266666666666667
+MAT and SAT only,Transition,2008-05-07,OADamStuck_0,fault-free,,
+MAT and SAT only,Transition,2008-05-07,OADamStuck_0,faulted,FC1,7.0
+MAT and SAT only,Transition,2008-05-08,OADamStuck_40,fault-free,FC11,7.0
+MAT and SAT only,Transition,2008-05-08,OADamStuck_40,faulted,FC1,7.866666666666666
+MAT and SAT only,Transition,2008-05-10,EADamStuck_0,fault-free,,
+MAT and SAT only,Transition,2008-05-10,EADamStuck_0,faulted,,
+MAT and SAT only,Transition,2008-05-11,EADamStuck_40,fault-free,,
+MAT and SAT only,Transition,2008-05-11,EADamStuck_40,faulted,,
+MAT and SAT only,Transition,2008-05-12,RetFan_Fail,fault-free,,
+MAT and SAT only,Transition,2008-05-12,RetFan_Fail,faulted,,
+MAT and SAT only,Transition,2008-05-13,MADam_Unst,fault-free,,
+MAT and SAT only,Transition,2008-05-13,MADam_Unst,faulted,FC4,7.05
+MAT and SAT only,Transition,2008-05-14,Con_MADam_CooCoi_Unst,fault-free,,
+MAT and SAT only,Transition,2008-05-14,Con_MADam_CooCoi_Unst,faulted,FC4,5.25
+MAT and SAT only,Transition,2008-05-15,CooCoilValStuck_100,fault-free,,
+MAT and SAT only,Transition,2008-05-15,CooCoilValStuck_100,faulted,,
+MAT and SAT only,Transition,2008-05-16,CooCoilValStuck_50,fault-free,,
+MAT and SAT only,Transition,2008-05-16,CooCoilValStuck_50,faulted,,
+MAT and SAT only,Transition,2008-05-17,HeaCooSeq_Unst,fault-free,,
+MAT and SAT only,Transition,2008-05-17,HeaCooSeq_Unst,faulted,FC4,5.0
+MAT and SAT only,Transition,2008-05-18,RetFanFixed_20,fault-free,,
+MAT and SAT only,Transition,2008-05-18,RetFanFixed_20,faulted,,
+MAT and SAT only,Transition,2008-05-19,RetFanFixed_80,fault-free,,
+MAT and SAT only,Transition,2008-05-19,RetFanFixed_80,faulted,,
+MAT and SAT only,Transition,2008-05-22,AirFilBlock_10,fault-free,,
+MAT and SAT only,Transition,2008-05-22,AirFilBlock_10,faulted,,
+MAT and SAT only,Transition,2008-05-25,AirFilBlock_25,fault-free,FC1 FC13,15.216666666666667
+MAT and SAT only,Transition,2008-05-25,AirFilBlock_25,faulted,FC13,12.1
+MAT and SAT only,Transition,2008-05-27,EADamStuck_100,fault-free,,
+MAT and SAT only,Transition,2008-05-27,EADamStuck_100,faulted,,
+MAT and SAT only,Transition,2008-05-29,TOut_p3,fault-free,,
+MAT and SAT only,Transition,2008-05-29,TOut_p3,faulted,,
+MAT and SAT only,Transition,2008-05-30,TOut_m3,fault-free,FC13,11.933333333333334
+MAT and SAT only,Transition,2008-05-30,TOut_m3,faulted,FC13,11.5
+MAT and SAT only,Transition,2008-06-01,ConSupFan_Unst,fault-free,,
+MAT and SAT only,Transition,2008-06-01,ConSupFan_Unst,faulted,,
+MAT and SAT only,Winter,2008-02-02,EADamStuck_100,fault-free,,
+MAT and SAT only,Winter,2008-02-02,EADamStuck_100,faulted,,
+MAT and SAT only,Winter,2008-02-03,EADamStuck_0,fault-free,,
+MAT and SAT only,Winter,2008-02-03,EADamStuck_0,faulted,,
+MAT and SAT only,Winter,2008-02-05,HeaCoiFou_1,fault-free,,
+MAT and SAT only,Winter,2008-02-05,HeaCoiFou_1,faulted,,
+MAT and SAT only,Winter,2008-02-06,HeaCoiFou_2,fault-free,,
+MAT and SAT only,Winter,2008-02-06,HeaCoiFou_2,faulted,FC1,7.766666666666667
+MAT and SAT only,Winter,2008-02-07,HeatCoiReduCapa_1,fault-free,,
+MAT and SAT only,Winter,2008-02-07,HeatCoiReduCapa_1,faulted,,
+MAT and SAT only,Winter,2008-02-08,HeatCoiReduCapa_2,fault-free,,
+MAT and SAT only,Winter,2008-02-08,HeatCoiReduCapa_2,faulted,,
+MAT and SAT only,Winter,2008-02-09,HeatCoiReduCapa_3,fault-free,,
+MAT and SAT only,Winter,2008-02-09,HeatCoiReduCapa_3,faulted,,
+MAT and SAT only,Winter,2008-02-10,CooCoiValStuck_100,fault-free,,
+MAT and SAT only,Winter,2008-02-10,CooCoiValStuck_100,faulted,,
+MAT and SAT only,Winter,2008-02-11,CooCoiValStuck_20,fault-free,,
+MAT and SAT only,Winter,2008-02-11,CooCoiValStuck_20,faulted,,
+MAT and SAT only,Winter,2008-02-12,OADamStuck_0,fault-free,,
+MAT and SAT only,Winter,2008-02-12,OADamStuck_0,faulted,FC1,7.033333333333333
+MAT and SAT only,Winter,2008-02-13,OADamLea_52,fault-free,,
+MAT and SAT only,Winter,2008-02-13,OADamLea_52,faulted,,
+MAT and SAT only,Winter,2008-02-15,EADamLea_62,fault-free,,
+MAT and SAT only,Winter,2008-02-15,EADamLea_62,faulted,,
